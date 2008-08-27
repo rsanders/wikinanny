@@ -7,18 +7,117 @@
  
 	<mx:Script>
 	<![CDATA[
+		import mx.resources.Locale;
 	
 	import lib.WikiNanny;
 	public var nanny:WikiNanny = new WikiNanny();
 
 	
+	public function getLanguage():String {
+		var locale:String = resourceManager.getLocales()[0];
+		var lang:String = locale.replace(/_.*$/, '');
+		return lang;		
+	}
+	
 	private function onComplete():void {
+		var lang:String = getLanguage();
+		// mx.resources.Locale.getCurrent(systemManager).language;
+		// var url:String = "http://" + lang + ".wikipedia.org/";
+		// loadURL(url);
+
+		loadSubject("Main_Page");
 		nanny.supervise(mainHTML);
+		
+		bindKeys();
+		
+		mainHTML.addEventListener(Event.LOCATION_CHANGE, handleLocationChange);
+	}
+	
+	private function handleKeyUp(event:KeyboardEvent):void {
+		if (event.commandKey || event.ctrlKey) {
+			handleCommandKey(event);
+		}
+	}
+	
+	private function handleCommandKey(event:KeyboardEvent):void {
+		var stop:Boolean = true;
+		switch (event.keyCode) {
+			case Keyboard.L:
+				urlTextInput.setFocus();
+				urlTextInput.selectionBeginIndex = 0;
+				urlTextInput.selectionEndIndex = urlTextInput.text.length;
+				break;
+			default:
+				stop = false;
+				trace("Unknown control/command key: " + event.keyCode);
+		}
+		
+		if (stop) event.stopPropagation();
+	}
+	
+	private function bindKeys():void {
+		this.addEventListener(KeyboardEvent.KEY_UP, handleKeyUp);
+		var children:Array = this.getChildren();
+		for (var i:int = 0; i < children.length; i++) {
+			var child:Object = children[i];
+			child.addEventListener(KeyboardEvent.KEY_UP, handleKeyUp);
+		}
+		
+	}
+
+	private function abortLocationEdit():void {
+		urlTextInput.selectionBeginIndex = urlTextInput.selectionEndIndex  = -1;
+		updateLocationInput();
+		mainHTML.setFocus();
+	}
+
+	private function handleInputKeyUp(event:KeyboardEvent):void {
+		var stop:Boolean = false;
+		if (event.commandKey || event.ctrlKey) {
+			switch (event.keyCode) {
+				
+			}
+		} else if (! event.commandKey && ! event.shiftKey && ! event.altKey && ! event.ctrlKey) {
+			switch (event.keyCode) {
+				case Keyboard.ESCAPE:
+					abortLocationEdit();
+					break;
+				case Keyboard.ENTER:
+					loadInputLocation();
+					break;
+			}
+		}
+		
+		if (stop) event.stopImmediatePropagation();
+	}
+	
+
+	private function extractSubject(location:String):String {
+		location = location.replace(/^http:\/\/.*\.wikipedia.org\/wiki\/([^?#]*)([?#].*)?/, '$1');
+		location = location.replace(/[_+-]/g, ' ');
+		return location;
+	}
+
+
+	private function updateLocationInput():void {
+		// don't update for temporary redirects
+		if (mainHTML.location.match(/search-redirect/)) {
+			return;
+		}
+		urlTextInput.text = extractSubject(mainHTML.location);
+	}
+
+	private function handleLocationChange(event:Event):void {
+		updateLocationInput();
+	}
+
+	private function loadInputLocation():void {
+		loadSubject(urlTextInput.text);
 	}
 
 	private function onClick(event:Event):void {
 		if(event.currentTarget == urlButton){
-			mainHTML.location = urlTextInput.text;
+			loadInputLocation();
 		} else if(event.currentTarget == backButton){
 			mainHTML.historyBack();
 		} else if(event.currentTarget == forwardButton){
@@ -28,6 +127,17 @@
 			
 		}
 	}
+	
+	public function loadURL(url:String):void {
+		mainHTML.location = url;
+	}
+
+	public function loadSubject(name:String):void {
+		var url:String = "http://www.wikipedia.org/search-redirect.php?search=" + name + "&language=" + getLanguage();
+		mainHTML.location = url;
+		mainHTML.setFocus();
+	}
+	
 	]]>
 	</mx:Script>
 
@@ -36,14 +146,14 @@
 			<mx:HBox width="100%">
 				<mx:Button id="backButton" label="&lt;" fontWeight="bold" click="onClick(event)"/>
 				<mx:Button id="forwardButton" label="&gt;" fontWeight="bold" click="onClick(event)"/>
-				<mx:Label text="URL:" fontWeight="bold"/>
-				<mx:TextInput id="urlTextInput" text="{mainHTML.location}" width="235"/>
-				<mx:Button id="urlButton" label="OK" click="onClick(event)"/>
+				<mx:Label text="Subject" fontWeight="bold"/>
+				<mx:TextInput id="urlTextInput" text="" width="100%" keyUp="handleInputKeyUp(event)"/>
+				<mx:Button id="urlButton" label="Search" click="onClick(event)"/>
 			</mx:HBox>
 		</mx:VBox>
 	</mx:ApplicationControlBar>
 	
 	<!-- the main event -->
-	<mx:HTML id="mainHTML" width="100%" height="100%" location="http://wikipedia.org"/>
+	<mx:HTML id="mainHTML" width="100%" height="100%" />
 
 </mx:WindowedApplication>

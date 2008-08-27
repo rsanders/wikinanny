@@ -19,13 +19,12 @@ package lib
 		
 		public function supervise(browser:mx.controls.HTML):void
 		{
-			// browser.addEventListener(
 			browser.addEventListener(Event.LOCATION_CHANGE, handleEventChange);
 		}
 		
 		public function handleEventChange(event:Event):void
 		{
-			Alert.show("Location change!");
+			// Alert.show("Location change!");
 		}
 	}
 
