@@ -27,10 +27,10 @@
 	<version>v1</version>
 
 	<!-- Description, displayed in the AIR application installer. Optional. -->
-	<!-- <description></description> -->
+	<description>Wikipedia Site-Specific Browser</description>
 
 	<!-- Copyright information. Optional -->
-	<!-- <copyright></copyright> -->
+	<copyright>Robert Sanders, rsanders@gmail.com - GNU Public License v2</copyright>>
 
 	<!-- Settings for the application's initial window. Required. -->
 	<initialWindow>
@@ -39,7 +39,7 @@
 		<content>[This value will be overwritten by Flex Builder in the output app.xml]</content>
 		
 		<!-- The title of the main window. Optional. -->
-		<!-- <title></title> -->
+		<title>Wiki in Moderation</title>
 
 		<!-- The type of system chrome to use (either "standard" or "none"). Optional. Default standard. -->
 		<!-- <systemChrome></systemChrome> -->
@@ -60,10 +60,10 @@
 		<!-- <resizable></resizable> -->
 
 		<!-- The window's initial width. Optional. -->
-		<!-- <width></width> -->
+		<width>800</width>
 
 		<!-- The window's initial height. Optional. -->
-		<!-- <height></height> -->
+		<height>600</height>
 
 		<!-- The window's initial x position. Optional. -->
 		<!-- <x></x> -->
@@ -72,7 +72,7 @@
 		<!-- <y></y> -->
 
 		<!-- The window's minimum size, specified as a width/height pair, such as "400 200". Optional. -->
-		<!-- <minSize></minSize> -->
+		<minSize>300 200</minSize>
 
 		<!-- The window's initial maximum size, specified as a width/height pair, such as "1600 1200". Optional. -->
 		<!-- <maxSize></maxSize> -->
@@ -100,7 +100,7 @@
 	
 	<!-- Whether the application can be launched when the user clicks a link in a web browser.
 	Optional. Default false. -->
-	<!-- <allowBrowserInvocation></allowBrowserInvocation> -->
+	<allowBrowserInvocation>true</allowBrowserInvocation>
 
 	<!-- Listing of file types for which the application can register. Optional. -->
 	<!-- <fileTypes> -->

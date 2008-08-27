@@ -1,31 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="vertical"
-title="AIR Browser">
-<mx:Script>
-<![CDATA[
-private function onClick(event:Event):void {
-	if(event.currentTarget == urlButton){
-		myHTML.location = urlTextInput.text;
-	} else if(event.currentTarget == backButton){
-		myHTML.historyBack();
-	} else if(event.currentTarget == forwardButton){
-		myHTML.historyForward();
-	} else {
-		//DO NOTHING!!!
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" 
+   name="wikiNanny"
+   layout="vertical"
+   applicationComplete="onComplete()"
+   title="WikiNanny">
+ 
+	<mx:Script>
+	<![CDATA[
+	
+	import lib.WikiNanny;
+	public var nanny:WikiNanny = new WikiNanny();
+
+	
+	private function onComplete():void {
+		nanny.supervise(mainHTML);
 	}
-}
-]]>
-</mx:Script>
-<mx:ApplicationControlBar width="100%">
-<mx:VBox width="100%">
-<mx:HBox width="100%">
-<mx:Button id="backButton" label="&lt;" fontWeight="bold" click="onClick(event)"/>
-<mx:Button id="forwardButton" label="&gt;" fontWeight="bold" click="onClick(event)"/>
-<mx:Label text="URL:" fontWeight="bold"/>
-<mx:TextInput id="urlTextInput" text="{myHTML.location}" width="235"/>
-<mx:Button id="urlButton" label="OK" click="onClick(event)"/>
-</mx:HBox>
-</mx:VBox>
-</mx:ApplicationControlBar>
-<mx:HTML id="myHTML" width="100%" height="100%" location="http://google.com"/>
+
+	private function onClick(event:Event):void {
+		if(event.currentTarget == urlButton){
+			mainHTML.location = urlTextInput.text;
+		} else if(event.currentTarget == backButton){
+			mainHTML.historyBack();
+		} else if(event.currentTarget == forwardButton){
+			mainHTML.historyForward();
+		} else {
+			//DO NOTHING!!!
+			
+		}
+	}
+	]]>
+	</mx:Script>
+
+	<mx:ApplicationControlBar width="100%">
+		<mx:VBox width="100%">
+			<mx:HBox width="100%">
+				<mx:Button id="backButton" label="&lt;" fontWeight="bold" click="onClick(event)"/>
+				<mx:Button id="forwardButton" label="&gt;" fontWeight="bold" click="onClick(event)"/>
+				<mx:Label text="URL:" fontWeight="bold"/>
+				<mx:TextInput id="urlTextInput" text="{mainHTML.location}" width="235"/>
+				<mx:Button id="urlButton" label="OK" click="onClick(event)"/>
+			</mx:HBox>
+		</mx:VBox>
+	</mx:ApplicationControlBar>
+	
+	<!-- the main event -->
+	<mx:HTML id="mainHTML" width="100%" height="100%" location="http://wikipedia.org"/>
+
 </mx:WindowedApplication>
