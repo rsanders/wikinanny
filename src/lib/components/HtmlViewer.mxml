@@ -10,6 +10,8 @@
 	import mx.core.FlexHTMLLoader;
 	import mx.resources.Locale;
 
+	public var scaleFactor:Number = 1.1;
+
 	private function onComplete():void {
 		bindKeys();
 		
@@ -27,27 +29,23 @@
 		}
 	}
 	
+	public function scaleUp():void {
+		trace("Scaling up");
+		var ss:Object = html.htmlLoader.window.document.styleSheets;
+		var sheet:Object = ss[0];
+		html.scaleY *= scaleFactor;
+		html.scaleX *= scaleFactor;		
+	}
+
+	public function scaleDown():void {
+		trace("Scaling down");
+		html.scaleY /= scaleFactor;
+		html.scaleX /= scaleFactor;		
+	}
+
 	private function handleCommandKey(event:KeyboardEvent):void {
 		var stop:Boolean = false;
 		switch (event.keyCode) {
-			case Keyboard.L:
-//				urlTextInput.setFocus();
-//				urlTextInput.selectionBeginIndex = 0;
-//				urlTextInput.selectionEndIndex = urlTextInput.text.length;
-				break;
-			// zoom text
-			case Keyboard.EQUAL:
-				html.scaleY *= 2;
-				html.scaleX *= 2;
-				stop = true;
-				break;
-			// unzoom text
-			case Keyboard.MINUS:
-				html.scaleY /= 2;
-				html.scaleX /= 2;
-				stop = true;
-				break;
-				
 			default:
 				stop = false;
 				trace("Unknown control/command key: " + event.keyCode);
@@ -70,7 +68,7 @@
 		html.location = url;
 	}
 
-	private function setDocumentFocus():void {
+	public function setDocumentFocus():void {
 		html.setFocus();
 		html.focusManager.setFocus(html.htmlLoader as FlexHTMLLoader);
 	}

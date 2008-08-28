@@ -24,32 +24,32 @@
 		return lang;		
 	}
 	
-	private function onComplete():void {
-		var lang:String = getLanguage();
-
+	private function onComplete():void 
+	{
 		currentHTML = mainHTML;
-
-		loadSubject("Main_Page");
 		nanny.supervise(currentHTML.html);
 		
 		bindKeys();
-		
 		this.addEventListener(FocusEvent.FOCUS_IN, handleFocusChange);
-		
 		currentHTML.addEventListener(Event.LOCATION_CHANGE, handleLocationChange);
+		currentHTML.html.addEventListener(Event.LOCATION_CHANGE, handleLocationChange);
+		loadSubject("Main_Page");
 	}
 	
-	private function handleFocusChange(event:FocusEvent):void {
+	private function handleFocusChange(event:FocusEvent):void 
+	{
 		trace("target is " + event.target.toString());
 	}
 	
-	private function handleKeyUp(event:KeyboardEvent):void {
+	private function handleKeyUp(event:KeyboardEvent):void 
+	{
 		if (event.commandKey || event.ctrlKey) {
 			handleCommandKey(event);
 		}
 	}
 	
-	private function handleCommandKey(event:KeyboardEvent):void {
+	private function handleCommandKey(event:KeyboardEvent):void 
+	{
 		var stop:Boolean = true;
 		switch (event.keyCode) {
 			case Keyboard.L:
@@ -59,15 +59,12 @@
 				break;
 			// zoom text
 			case Keyboard.EQUAL:
-				currentHTML.scaleY *= 2;
-				currentHTML.scaleX *= 2;
+				currentHTML.scaleUp();
 				break;
 			// unzoom text
 			case Keyboard.MINUS:
-				currentHTML.scaleY /= 2;
-				currentHTML.scaleX /= 2;
+				currentHTML.scaleDown();
 				break;
-				
 			default:
 				stop = false;
 				trace("Unknown control/command key: " + event.keyCode);
@@ -76,7 +73,8 @@
 		if (stop) event.stopPropagation();
 	}
 	
-	private function bindKeys():void {
+	private function bindKeys():void 
+	{
 		this.addEventListener(KeyboardEvent.KEY_UP, handleKeyUp);
 		var children:Array = this.getChildren();
 		for (var i:int = 0; i < children.length; i++) {
@@ -86,13 +84,15 @@
 		
 	}
 
-	private function abortLocationEdit():void {
+	private function abortLocationEdit():void 
+	{
 		urlTextInput.selectionBeginIndex = urlTextInput.selectionEndIndex  = -1;
 		updateLocationInput();
-		setDocumentFocus();
+		currentHTML.setDocumentFocus();
 	}
 
-	private function handleInputKeyUp(event:KeyboardEvent):void {
+	private function handleInputKeyUp(event:KeyboardEvent):void 
+	{
 		var stop:Boolean = false;
 		if (event.commandKey || event.ctrlKey) {
 			switch (event.keyCode) {
@@ -112,16 +112,16 @@
 		
 		if (stop) event.stopImmediatePropagation();
 	}
-	
 
-	private function extractSubject(location:String):String {
+	private function extractSubject(location:String):String 
+	{
 		location = location.replace(/^http:\/\/.*\.wikipedia.org\/wiki\/([^?#]*)([?#].*)?/, '$1');
 		location = location.replace(/[_+-]/g, ' ');
 		return location;
 	}
 
-
-	private function updateLocationInput():void {
+	private function updateLocationInput():void 
+	{
 		// don't update for temporary redirects
 		if (currentHTML.html.location.match(/search-redirect/)) {
 			return;
@@ -129,53 +129,49 @@
 		urlTextInput.text = extractSubject(currentHTML.html.location);
 	}
 
-	private function handleLocationChange(event:Event):void {
+	private function handleLocationChange(event:Event):void 
+	{
 		updateLocationInput();
 	}
 
-	private function loadInputLocation():void {
+	private function loadInputLocation():void 
+	{
 		loadSubject(urlTextInput.text);
 	}
 
-	private function onClick(event:Event):void {
-		if(event.currentTarget == urlButton){
-			loadInputLocation();
-		} else if(event.currentTarget == backButton){
-			currentHTML.html.historyBack();
-		} else if(event.currentTarget == forwardButton){
-			currentHTML.html.historyForward();
-		} else {
-			//DO NOTHING!!!
-			
-		}
+	private function goBack():void 
+	{
+			currentHTML.html.historyBack();		
 	}
-	
-	public function loadURL(url:String):void {
+
+	private function goForward():void 
+	{
+			currentHTML.html.historyForward();		
+	}
+
+	public function loadURL(url:String):void 
+	{
 		currentHTML.html.location = url;
 	}
 
-	public function loadSubject(name:String):void {
+	public function loadSubject(name:String):void 
+	{
 		var url:String = "http://www.wikipedia.org/search-redirect.php?search=" + name + "&language=" + getLanguage();
 		currentHTML.html.location = url;
-		setDocumentFocus();
+		currentHTML.setDocumentFocus();
 	}
-	
-	private function setDocumentFocus():void {
-		currentHTML.html.setFocus();
-		currentHTML.html.focusManager.setFocus(currentHTML.html.htmlLoader as FlexHTMLLoader);
-	}
-	
+
 	]]>
 	</mx:Script>
 
 	<mx:ApplicationControlBar width="100%">
 		<mx:VBox width="100%">
 			<mx:HBox width="100%">
-				<mx:Button id="backButton" label="&lt;" fontWeight="bold" click="onClick(event)"/>
-				<mx:Button id="forwardButton" label="&gt;" fontWeight="bold" click="onClick(event)"/>
+				<mx:Button id="backButton" label="&lt;" fontWeight="bold" click="goBack()"/>
+				<mx:Button id="forwardButton" label="&gt;" fontWeight="bold" click="goForward()"/>
 				<mx:Label text="Subject" fontWeight="bold"/>
 				<mx:TextInput id="urlTextInput" text="" width="100%" keyUp="handleInputKeyUp(event)"/>
-				<mx:Button id="urlButton" label="Search" click="onClick(event)"/>
+				<mx:Button id="urlButton" label="Search" click="loadInputLocation()"/>
 				<mx:Button id="btnFlexSpy" label="FlexSpy" click="FlexSpy.show()" />
 				
 			</mx:HBox>
