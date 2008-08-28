@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+	creationComplete="onComplete()" 
+	width="100%" height="100%">
+
+
+	<mx:Script>
+	<![CDATA[
+
+	import mx.core.FlexHTMLLoader;
+	import mx.resources.Locale;
+
+	private function onComplete():void {
+		bindKeys();
+		
+		this.addEventListener(FocusEvent.FOCUS_IN, handleFocusChange);
+		// html.addEventListener(Event.LOCATION_CHANGE, handleLocationChange);
+	}
+	
+	private function handleFocusChange(event:FocusEvent):void {
+		trace("target is " + event.target.toString());
+	}
+	
+	private function handleKeyUp(event:KeyboardEvent):void {
+		if (event.commandKey || event.ctrlKey) {
+			handleCommandKey(event);
+		}
+	}
+	
+	private function handleCommandKey(event:KeyboardEvent):void {
+		var stop:Boolean = false;
+		switch (event.keyCode) {
+			case Keyboard.L:
+//				urlTextInput.setFocus();
+//				urlTextInput.selectionBeginIndex = 0;
+//				urlTextInput.selectionEndIndex = urlTextInput.text.length;
+				break;
+			// zoom text
+			case Keyboard.EQUAL:
+				html.scaleY *= 2;
+				html.scaleX *= 2;
+				stop = true;
+				break;
+			// unzoom text
+			case Keyboard.MINUS:
+				html.scaleY /= 2;
+				html.scaleX /= 2;
+				stop = true;
+				break;
+				
+			default:
+				stop = false;
+				trace("Unknown control/command key: " + event.keyCode);
+		}
+		
+		if (stop) event.stopPropagation();
+	}
+	
+	private function bindKeys():void {
+		this.addEventListener(KeyboardEvent.KEY_UP, handleKeyUp);
+		var children:Array = this.getChildren();
+		for (var i:int = 0; i < children.length; i++) {
+			var child:Object = children[i];
+			child.addEventListener(KeyboardEvent.KEY_UP, handleKeyUp);
+		}
+		
+	}
+
+	public function loadURL(url:String):void {
+		html.location = url;
+	}
+
+	private function setDocumentFocus():void {
+		html.setFocus();
+		html.focusManager.setFocus(html.htmlLoader as FlexHTMLLoader);
+	}
+	
+	]]>
+	</mx:Script>
+
+	<!-- the main event -->
+	<mx:HTML id="html" width="100%" height="100%" />
+</mx:Canvas>

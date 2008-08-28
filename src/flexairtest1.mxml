@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" 
+	xmlns:wn="lib.components.*"
    name="wikiNanny"
    layout="vertical"
    applicationComplete="onComplete()"
@@ -7,12 +8,15 @@
  
 	<mx:Script>
 	<![CDATA[
-		import mx.core.FlexHTMLLoader;
-		import mx.resources.Locale;
-	
-	import lib.WikiNanny;
-	public var nanny:WikiNanny = new WikiNanny();
 
+	import mx.core.FlexHTMLLoader;
+	import mx.resources.Locale;
+	import com.flexspy.FlexSpy;
+	import lib.WikiNanny;
+	
+	public var nanny:WikiNanny = new WikiNanny();
+	
+	public var currentHTML:HtmlViewer;
 	
 	public function getLanguage():String {
 		var locale:String = resourceManager.getLocales()[0];
@@ -22,20 +26,17 @@
 	
 	private function onComplete():void {
 		var lang:String = getLanguage();
-		// mx.resources.Locale.getCurrent(systemManager).language;
-		// var url:String = "http://" + lang + ".wikipedia.org/";
-		// loadURL(url);
 
-		mainHTML.tabEnabled = true;
+		currentHTML = mainHTML;
 
 		loadSubject("Main_Page");
-		nanny.supervise(mainHTML);
+		nanny.supervise(currentHTML.html);
 		
 		bindKeys();
 		
 		this.addEventListener(FocusEvent.FOCUS_IN, handleFocusChange);
 		
-		mainHTML.addEventListener(Event.LOCATION_CHANGE, handleLocationChange);
+		currentHTML.addEventListener(Event.LOCATION_CHANGE, handleLocationChange);
 	}
 	
 	private function handleFocusChange(event:FocusEvent):void {
@@ -56,6 +57,17 @@
 				urlTextInput.selectionBeginIndex = 0;
 				urlTextInput.selectionEndIndex = urlTextInput.text.length;
 				break;
+			// zoom text
+			case Keyboard.EQUAL:
+				currentHTML.scaleY *= 2;
+				currentHTML.scaleX *= 2;
+				break;
+			// unzoom text
+			case Keyboard.MINUS:
+				currentHTML.scaleY /= 2;
+				currentHTML.scaleX /= 2;
+				break;
+				
 			default:
 				stop = false;
 				trace("Unknown control/command key: " + event.keyCode);
@@ -91,6 +103,7 @@
 				case Keyboard.ESCAPE:
 					abortLocationEdit();
 					break;
+
 				case Keyboard.ENTER:
 					loadInputLocation();
 					break;
@@ -110,10 +123,10 @@
 
 	private function updateLocationInput():void {
 		// don't update for temporary redirects
-		if (mainHTML.location.match(/search-redirect/)) {
+		if (currentHTML.html.location.match(/search-redirect/)) {
 			return;
 		}
-		urlTextInput.text = extractSubject(mainHTML.location);
+		urlTextInput.text = extractSubject(currentHTML.html.location);
 	}
 
 	private function handleLocationChange(event:Event):void {
@@ -128,9 +141,9 @@
 		if(event.currentTarget == urlButton){
 			loadInputLocation();
 		} else if(event.currentTarget == backButton){
-			mainHTML.historyBack();
+			currentHTML.html.historyBack();
 		} else if(event.currentTarget == forwardButton){
-			mainHTML.historyForward();
+			currentHTML.html.historyForward();
 		} else {
 			//DO NOTHING!!!
 			
@@ -138,19 +151,18 @@
 	}
 	
 	public function loadURL(url:String):void {
-		mainHTML.location = url;
+		currentHTML.html.location = url;
 	}
 
 	public function loadSubject(name:String):void {
 		var url:String = "http://www.wikipedia.org/search-redirect.php?search=" + name + "&language=" + getLanguage();
-		mainHTML.location = url;
-		// mainHTML.setFocus();
+		currentHTML.html.location = url;
 		setDocumentFocus();
 	}
 	
 	private function setDocumentFocus():void {
-		mainHTML.setFocus();
-		mainHTML.focusManager.setFocus(mainHTML.htmlLoader as FlexHTMLLoader);
+		currentHTML.html.setFocus();
+		currentHTML.html.focusManager.setFocus(currentHTML.html.htmlLoader as FlexHTMLLoader);
 	}
 	
 	]]>
@@ -164,11 +176,13 @@
 				<mx:Label text="Subject" fontWeight="bold"/>
 				<mx:TextInput id="urlTextInput" text="" width="100%" keyUp="handleInputKeyUp(event)"/>
 				<mx:Button id="urlButton" label="Search" click="onClick(event)"/>
+				<mx:Button id="btnFlexSpy" label="FlexSpy" click="FlexSpy.show()" />
+				
 			</mx:HBox>
 		</mx:VBox>
 	</mx:ApplicationControlBar>
 	
 	<!-- the main event -->
-	<mx:HTML id="mainHTML" width="100%" height="100%" />
+	<wn:HtmlViewer id="mainHTML" width="100%" height="100%" />
 
 </mx:WindowedApplication>
