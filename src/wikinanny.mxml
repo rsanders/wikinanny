@@ -32,7 +32,7 @@
 		bindKeys();
 		this.addEventListener(FocusEvent.FOCUS_IN, handleFocusChange);
 		currentHTML.addEventListener(Event.LOCATION_CHANGE, handleLocationChange);
-		currentHTML.html.addEventListener(Event.LOCATION_CHANGE, handleLocationChange);
+		// currentHTML.html.addEventListener(Event.LOCATION_CHANGE, handleLocationChange);
 		loadSubject("Main_Page");
 	}
 	

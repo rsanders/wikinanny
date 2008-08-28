@@ -10,17 +10,33 @@
 	import mx.core.FlexHTMLLoader;
 	import mx.resources.Locale;
 
-	public var scaleFactor:Number = 1.1;
+	public var scaleFactor:Number = 1.01;
+	public var fontMagnification:Number = 1;
+	
+	public var privateSheet:Object, fontRule:Object;
 
 	private function onComplete():void {
 		bindKeys();
 		
 		this.addEventListener(FocusEvent.FOCUS_IN, handleFocusChange);
-		// html.addEventListener(Event.LOCATION_CHANGE, handleLocationChange);
+
+		html.addEventListener(Event.COMPLETE, handleHTMLComplete);
+
+		// events to bubble up
+		html.addEventListener(Event.LOCATION_CHANGE, bubbleEvent);
+	}
+	
+	private function handleHTMLComplete(event:Event):void {
+		synthesizeCSS();
+		adjustFontSize(fontMagnification);
 	}
 	
 	private function handleFocusChange(event:FocusEvent):void {
 		trace("target is " + event.target.toString());
+	}
+	
+	private function bubbleEvent(event:Event):void {
+		this.dispatchEvent(event);
 	}
 	
 	private function handleKeyUp(event:KeyboardEvent):void {
@@ -32,15 +48,27 @@
 	public function scaleUp():void {
 		trace("Scaling up");
 		var ss:Object = html.htmlLoader.window.document.styleSheets;
-		var sheet:Object = ss[0];
-		html.scaleY *= scaleFactor;
-		html.scaleX *= scaleFactor;		
+		var sheet:Object = privateSheet;
+		var rule:Object = fontRule;
+		fontMagnification *= scaleFactor;
+		adjustFontSize(fontMagnification);
+
+		// html.scaleY *= scaleFactor;
+		// html.scaleX *= scaleFactor;		
 	}
 
 	public function scaleDown():void {
 		trace("Scaling down");
-		html.scaleY /= scaleFactor;
-		html.scaleX /= scaleFactor;		
+		fontMagnification /= scaleFactor;
+		adjustFontSize(fontMagnification);
+//		html.scaleY /= scaleFactor;
+//		html.scaleX /= scaleFactor;		
+	}
+
+	public function adjustFontSize(scale:Number):void {
+		trace("previous size is " + fontRule.style['font-size']);
+		fontRule.style['font-size'] = '' + int(scale*100) + '%';
+		trace("post size is " + fontRule.style['font-size']);
 	}
 
 	private function handleCommandKey(event:KeyboardEvent):void {
@@ -71,6 +99,34 @@
 	public function setDocumentFocus():void {
 		html.setFocus();
 		html.focusManager.setFocus(html.htmlLoader as FlexHTMLLoader);
+	}
+
+	// http://www.javascriptkit.com/domref/stylesheet.shtml
+	// http://www.howtocreate.co.uk/tutorials/javascript/domstylesheets
+	// http://www.aptana.com/reference/html/api/CSSStyleSheet.html
+	// http://www.quirksmode.org/dom/changess.html
+	// http://www.hunlock.com/blogs/Totally_Pwn_CSS_with_Javascript
+
+	private function synthesizeCSS():void {
+		var document:Object = html.htmlLoader.window.document;
+		var ss:Object = document.styleSheets;
+		var len:int = ss.length;
+
+
+		var head:Object = document.getElementsByTagName("head")[0];
+		var elt:Object = document.createElement("style");
+		elt.type = 'text/css';
+		elt.rel = 'stylesheet';
+		elt.media = 'screen';
+		elt.title = 'dynamicSheet';
+		head.appendChild(elt);
+		
+		len = document.styleSheets.length;
+		
+		privateSheet = document.styleSheets[document.styleSheets.length-1];
+		
+		privateSheet.addRule('*', 'font-size: ' + int(scaleFactor*100) + '%');
+		fontRule = privateSheet.cssRules[0];
 	}
 	
 	]]>
