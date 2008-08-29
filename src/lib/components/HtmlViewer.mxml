@@ -120,6 +120,10 @@
 		
 		privateSheet.addRule('body', 'font-size: 100%');
 		fontRule = privateSheet.cssRules[0];
+		
+		// hide all but main column
+		privateSheet.addRule('#column-one, #footer, #anon-banner', 'display: none');
+		privateSheet.addRule('#content', 'margin-left: 0px; margin-top: 0px');
 	}
 
    private function insertIntrospector():void {
