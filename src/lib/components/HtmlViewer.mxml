@@ -16,8 +16,6 @@
 	public var privateSheet:Object, fontRule:Object;
 
 	private function onComplete():void {
-		// html.htmlLoader.
-
 		bindKeys();
 		
 		this.addEventListener(FocusEvent.FOCUS_IN, handleFocusChange);
