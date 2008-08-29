@@ -132,8 +132,8 @@
        var head:Object = document.getElementsByTagName("head")[0];
        var elt:Object = document.createElement("script");
        elt.type = 'text/javascript';
-       elt.src = 'app:/lib/sandbox/AIRIntrospector.js';
-       // elt.src = 'http://getfirebug.com/releases/lite/1.2/firebug-lite.js';
+       // elt.src = 'app:/lib/sandbox/AIRIntrospector.js';
+       elt.src = 'http://getfirebug.com/releases/lite/1.2/firebug-lite.js';
        // elt.src = 'http://home.local.esquimaux.org/AIRIntrospector.js';
        head.appendChild(elt);          
    }
