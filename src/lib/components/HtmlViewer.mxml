@@ -10,7 +10,7 @@
 	import mx.core.FlexHTMLLoader;
 	import mx.resources.Locale;
 
-	public var scaleFactor:Number = 1.01;
+	public var scaleFactor:Number = 1.1;
 	public var fontMagnification:Number = 1;
 	
 	public var privateSheet:Object, fontRule:Object;
@@ -118,7 +118,7 @@
 		
 		privateSheet = document.styleSheets[document.styleSheets.length-1];
 		
-		privateSheet.addRule('*', 'font-size: ' + int(scaleFactor*100) + '%');
+		privateSheet.addRule('body', 'font-size: 100%');
 		fontRule = privateSheet.cssRules[0];
 	}
 
