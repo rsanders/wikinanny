@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: tabs / windows
+desc: need to support tabs and windows -- LIMITED
+type: :feature
+component: wikinanny
+release: 
+reporter: Robert Sanders <rsanders+wikinanny@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2008-08-30 22:39:59.197315 Z
+references: []
+
+id: e0f3ac1e3c2e7ee13e44ad0bd9567ddce6390d5e
+log_events: 
+- - 2008-08-30 22:40:00.700203 Z
+  - Robert Sanders <rsanders+wikinanny@gmail.com>
+  - created
+  - ""

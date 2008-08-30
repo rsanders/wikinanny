@@ -1,0 +1,20 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: track wiki navigation
+desc: |-
+  The entire point of this: track transitions from one page to another,
+  and presentin some graphical format
+type: :feature
+component: wikinanny
+release: 
+reporter: Robert Sanders <rsanders+wikinanny@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2008-08-30 22:40:30.939483 Z
+references: []
+
+id: 22da7e4718dd0b7e41baadc9fc6d5f33ac581e9e
+log_events: 
+- - 2008-08-30 22:40:31.860570 Z
+  - Robert Sanders <rsanders+wikinanny@gmail.com>
+  - created
+  - ""

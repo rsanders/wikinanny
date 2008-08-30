@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: add search functionality
+desc: need to support search functionality (in-page, e.g. ctrl-s)
+type: :feature
+component: wikinanny
+release: 
+reporter: Robert Sanders <rsanders+wikinanny@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2008-08-30 22:38:17.371345 Z
+references: []
+
+id: 5db800fdcccbfb8d44164982748308b765e18718
+log_events: 
+- - 2008-08-30 22:38:19.002969 Z
+  - Robert Sanders <rsanders+wikinanny@gmail.com>
+  - created
+  - ""

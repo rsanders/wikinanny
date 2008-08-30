@@ -1,0 +1,23 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: fix FOUC-ish flash of reformatting
+desc: |-
+  after the page loads, WN inserts a synthetic stylesheet to change font size
+  and
+  remove some unnecessary page components.  however, the page fully renders
+  without this stylesheet, and is visible, and *then* in a second or three,
+  the new style is shown.
+type: :feature
+component: wikinanny
+release: 
+reporter: Robert Sanders <rsanders+wikinanny@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2008-08-30 22:39:44.291618 Z
+references: []
+
+id: 864e9d0831ac290915b80315968be014b5317d06
+log_events: 
+- - 2008-08-30 22:39:45.564729 Z
+  - Robert Sanders <rsanders+wikinanny@gmail.com>
+  - created
+  - ""

@@ -1,0 +1,20 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: implement controls - time and graph
+desc: |-
+  Should implement a max time on wikipedia
+  also, max # of pages, max fanout / depth, etc.
+type: :feature
+component: wikinanny
+release: 
+reporter: Robert Sanders <rsanders+wikinanny@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2008-08-30 22:40:54.764954 Z
+references: []
+
+id: 658ab620a491adbc5431cdd8932e543070edccac
+log_events: 
+- - 2008-08-30 22:40:55.669243 Z
+  - Robert Sanders <rsanders+wikinanny@gmail.com>
+  - created
+  - ""
