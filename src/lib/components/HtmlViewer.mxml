@@ -13,6 +13,10 @@
 	public var scaleFactor:Number = 1.1;
 	public var fontMagnification:Number = 1;
 	
+	// per-page stati info
+	protected var renderCount:int = 0;
+	protected var fiddled:Boolean = false;
+	
 	public var privateSheet:Object, fontRule:Object;
 
 	private function onComplete():void {
@@ -21,16 +25,77 @@
 		this.addEventListener(FocusEvent.FOCUS_IN, handleFocusChange);
 
 		html.addEventListener(Event.COMPLETE, handleHTMLComplete);
+		
+		html.addEventListener(Event.HTML_RENDER, handleRender);
+		html.addEventListener(Event.HTML_DOM_INITIALIZE, handleDOMInit);	
 
 		// events to bubble up
-		html.addEventListener(Event.LOCATION_CHANGE, bubbleEvent);
+		html.addEventListener(Event.LOCATION_CHANGE, handleLocationChange);
 	}
 	
-	private function handleHTMLComplete(event:Event):void {
+	private function handleRender(event:Event):void {
+		// renderCount++;
+		// trace("render!");		
+		if (renderCount >= 1) {
+			return;
+		}
+		
+		var head:Object = getWikiDocument().getElementsByTagName("head");
+		if (head == null || head.length == 0) {
+			trace("no head yet");
+			return;
+		}
+		trace("got head");
+		renderCount++;
+		
+		fiddleDOM();
+
+	}
+
+	private function fiddleDOM():void {
+		if (fiddled) {
+			trace("already fiddled");
+			return;
+		}
+		var head:Object = getWikiDocument().getElementsByTagName("head");
+		if (head == null || head.length == 0) {
+			trace("no head yet");
+			return;
+		}
+		
+		var window:Object =  html.htmlLoader.window;
+		trace("window is " + window.toString());
+		window.addEventListener("domready", handleDOMReady);
+		window.addEventListener("load", function():void { trace("loaded"); });
+		
+		trace("fiddleDOM!");		
 		synthesizeCSS();
 		insertIntrospector();
 		adjustFontSize(fontMagnification);
+		html.visible = true;
 	}
+
+	private function handleDOMInit(event:Event):void {
+		trace("dominit!");
+		// fiddleDOM();
+
+	}
+
+	private function handleDOMReady():void {
+		trace("domready");
+	}
+	
+	private function handleHTMLComplete(event:Event):void {
+		fiddleDOM();
+	}
+	
+	private function handleLocationChange(event:Event):void {
+		renderCount = 0;
+		fiddled = false;
+		html.visible = false;
+		bubbleEvent(event);		
+	}
+	
 	
 	private function handleFocusChange(event:FocusEvent):void {
 		trace("target is " + event.target.toString());
@@ -59,9 +124,9 @@
 	}
 
 	public function adjustFontSize(scale:Number):void {
-		trace("previous size is " + fontRule.style['font-size']);
+		// trace("previous size is " + fontRule.style['font-size']);
 		fontRule.style['font-size'] = '' + int(scale*100) + '%';
-		trace("post size is " + fontRule.style['font-size']);
+		// trace("post size is " + fontRule.style['font-size']);
 	}
 
 	private function handleCommandKey(event:KeyboardEvent):void {
@@ -86,6 +151,7 @@
 	}
 
 	public function loadURL(url:String):void {
+		renderCount = 0;
 		html.location = url;
 	}
 
@@ -127,16 +193,25 @@
 	}
 
    private function insertIntrospector():void {
+       // elt.src = 'app:/lib/sandbox/AIRIntrospector.js';
+       // elt.src = 'http://getfirebug.com/releases/lite/1.2/firebug-lite.js';
+       // elt.src = 'http://home.local.esquimaux.org/AIRIntrospector.js';
+       
+       // insertJSFile("http://getfirebug.com/releases/lite/1.2/pi.js");
+       // insertJSFile("http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js");
+
+   }
+   
+   private function insertJSFile(file:String):void {
        var document:Object = getWikiDocument();
        
        var head:Object = document.getElementsByTagName("head")[0];
        var elt:Object = document.createElement("script");
        elt.type = 'text/javascript';
-       // elt.src = 'app:/lib/sandbox/AIRIntrospector.js';
-       elt.src = 'http://getfirebug.com/releases/lite/1.2/firebug-lite.js';
-       // elt.src = 'http://home.local.esquimaux.org/AIRIntrospector.js';
+       elt.src = file;
        head.appendChild(elt);          
    }
+   // http://getfirebug.com/releases/lite/1.2/pi.js
    
    public function getWikiDocument():Object {
        return html.htmlLoader.window.document;
