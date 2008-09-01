@@ -17,6 +17,8 @@
 	protected var renderCount:int = 0;
 	protected var fiddled:Boolean = false;
 	
+	protected var renderExecQueue:Array = [];
+	
 	public var privateSheet:Object, fontRule:Object;
 
 	private function onComplete():void {
@@ -35,7 +37,14 @@
 	
 	private function handleRender(event:Event):void {
 		// renderCount++;
-		// trace("render!");		
+		// trace("render!");
+
+		for (var i:int = 0; i < renderExecQueue.length; i++) {
+			var func:Function = renderExecQueue[i] as Function;
+			func.call(this);
+		}
+		renderExecQueue = [];
+		
 		if (renderCount >= 1) {
 			return;
 		}
@@ -66,13 +75,16 @@
 		var window:Object =  html.htmlLoader.window;
 		trace("window is " + window.toString());
 		window.addEventListener("domready", handleDOMReady);
+		window.addEventListener("domcontentloaded", handleDOMReady);
 		window.addEventListener("load", function():void { trace("loaded"); });
 		
 		trace("fiddleDOM!");		
 		synthesizeCSS();
 		insertIntrospector();
 		adjustFontSize(fontMagnification);
-		html.visible = true;
+		
+		renderExecQueue.push(function():void { html.visible = true; });
+		// html.visible = true;
 	}
 
 	private function handleDOMInit(event:Event):void {
@@ -98,7 +110,7 @@
 	
 	
 	private function handleFocusChange(event:FocusEvent):void {
-		trace("target is " + event.target.toString());
+		// trace("target is " + event.target.toString());
 	}
 	
 	private function bubbleEvent(event:Event):void {
